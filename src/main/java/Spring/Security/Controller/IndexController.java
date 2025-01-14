@@ -3,6 +3,8 @@ package Spring.Security.Controller;
 import Spring.Security.model.User;
 import Spring.Security.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -67,5 +69,19 @@ public class IndexController {
         userRepository.save(user); // 비밀번호가 "1234" 이렇게 되어 있으면, 암호화가 안되었기 때문에 로그인을 할 수 없다.
 
         return "redirect:/loginForm";
+    }
+
+    // 하나의 권한을 걸고 싶은 경우
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/info")
+    public @ResponseBody String info() {
+         return "개인정보";
+    }
+
+    // 두개 이상의 권한을 걸고 싶은 경우(함수 시작 전)
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+    @GetMapping("/data")
+    public @ResponseBody String data() {
+        return "데이터 정보";
     }
 }
