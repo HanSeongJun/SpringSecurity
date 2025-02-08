@@ -26,8 +26,8 @@ spring:
       client:
         registration:
           google:
-            client-id: # 클라이언트 아이디
-            client-secret: # 클라이언트 비밀번호
+            client-id: #클라이언트 아이디
+            client-secret: #클라이언트 비밀번호
             scope:
               - email
               - profile
