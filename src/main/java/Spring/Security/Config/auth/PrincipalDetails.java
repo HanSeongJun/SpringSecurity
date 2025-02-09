@@ -20,22 +20,36 @@ import java.util.*;
  * Security Session => Authentication => UserDetails
  */
 
-@RequiredArgsConstructor
 @Data
 public class PrincipalDetails implements UserDetails, OAuth2User {
 
-    private final User user;
+    private User user;
+    private Map<String, Object> attributes;
 
-    @Override
-    public Map<String, Object> getAttributes() {
-        return Map.of();
+    // 생성자 : 일반 로그인
+    public PrincipalDetails(User user) {
+        this.user = user;
+    }
+
+    // 생성자 : OAuth 로그인
+    public PrincipalDetails(User user, Map<String, Object> attributes) {
+        this.user = user;
+        this.attributes = attributes;
     }
 
     // 해당 User의 권한을 리턴하는 곳.
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 사용자의 권한(role)을 GrantedAuthority로 변환하여 반환
-        return Collections.singletonList(new SimpleGrantedAuthority(user.getRole()));
+        Collection<GrantedAuthority> collect = new ArrayList<>();
+
+        collect.add(new GrantedAuthority() { // String 타입 객체를 담아 리턴하기 위해 넣음.
+            @Override
+            public String getAuthority() {
+                return user.getRole();
+            }
+        });
+
+        return collect;
     }
 
     @Override
@@ -67,11 +81,18 @@ public class PrincipalDetails implements UserDetails, OAuth2User {
     // 계절 활성화
     @Override
     public boolean isEnabled() {
+        // false? 우리 사이트에 1년동안 회원이 로그인을 안하면 휴먼 계정으로 하기로 함!
+        // 현재시간 - 로그인시간 => 1년을 초과하면 return을 false로 바꿈.
         return true;
     }
 
     @Override
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    @Override
     public String getName() {
-        return "";
+        return null;
     }
 }
