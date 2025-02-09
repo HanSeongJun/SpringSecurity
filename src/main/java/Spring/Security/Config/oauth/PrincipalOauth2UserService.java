@@ -3,6 +3,7 @@ package Spring.Security.Config.oauth;
 import Spring.Security.Config.auth.PrincipalDetails;
 import Spring.Security.Config.oauth.provider.FacebookUserInfo;
 import Spring.Security.Config.oauth.provider.GoogleUserInfo;
+import Spring.Security.Config.oauth.provider.NaverUserInfo;
 import Spring.Security.Config.oauth.provider.OAuth2UserInfo;
 import Spring.Security.model.User;
 import Spring.Security.repository.UserRepository;
@@ -13,6 +14,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
@@ -50,6 +53,9 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
         } else if (registrationId.equals("facebook")) {
             System.out.println("페이스북 로그인 요청");
             oAuth2UserInfo = new FacebookUserInfo(oAuth2User.getAttributes());
+        } else if (registrationId.equals("naver")) {
+            System.out.println("네이버 로그인 요청");
+            oAuth2UserInfo = new NaverUserInfo((Map)oAuth2User.getAttributes().get("response"));
         }
         else {
             throw new OAuth2AuthenticationException("지원되지 않는 소셜 로그인 제공자입니다: " + registrationId);
